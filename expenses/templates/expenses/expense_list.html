@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>My Expenses</title>
+</head>
+<body>
+    <h1>My Expenses</h1>
+    <p>Logged in as {{ user.username }}</p>
+    <p>
+    <a href="{% url 'expense_create' %}">Add a new expense</a>
+    </p>
+    {% if expenses %}
+        <ul>
+            {% for expense in expenses %}
+                <li>
+                 {{ expense.date }} | {{ expense.title }} | €{{ expense.amount }} | {{ expense.category }}
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+    <p>You have no expenses yet.</p>
+    {% endif %}
+
+    <form method="post" action="{% url 'logout' %}">
+        {% csrf_token %}
+        <button type="submit">Log out</button>
+    </form>
+</body>
+</html>
