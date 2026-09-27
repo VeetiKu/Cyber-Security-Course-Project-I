@@ -2,7 +2,7 @@ from django.shortcuts import render
 
 # Create your views here.
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import redirect, render
+from django.shortcuts import redirect, render, get_object_or_404
 from .forms import ExpenseForm
 from .models import Expense
 from django.contrib.auth import login
@@ -47,3 +47,20 @@ def register(request):
     return render(request,
                   "registration/register.html",
                   {"form": form},)
+    
+@login_required
+def expense_detail(request, expense_id):
+    # FLAW 1 OWASP 2021 A01: Broken Access Control
+    # The expense is retrieved without checking its owner.
+    expense = get_object_or_404(Expense, pk=expense_id)
+
+    # FIX:
+    # expense = get_object_or_404(
+    #     Expense,
+    #     pk=expense_id,
+    #     owner=request.user,)
+
+    return render(
+        request,
+        "expenses/expense_detail.html",
+        {"expense": expense},)

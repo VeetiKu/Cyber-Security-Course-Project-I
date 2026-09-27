@@ -14,7 +14,13 @@
         <ul>
             {% for expense in expenses %}
                 <li>
-                 {{ expense.date }} | {{ expense.title }} | €{{ expense.amount }} | {{ expense.category }}
+                 {{ expense.date }}
+                 <a href="{% url 'expense_detail' expense.id %}">
+                    {{ expense.title }}
+                    </a>
+                    |
+                    €{{ expense.amount }} |
+                    {{ expense.category }}
                 </li>
             {% endfor %}
         </ul>
