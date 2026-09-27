@@ -3,9 +3,10 @@ from django.shortcuts import render
 # Create your views here.
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render
-
 from .forms import ExpenseForm
 from .models import Expense
+from django.contrib.auth import login
+from django.contrib.auth.forms import UserCreationForm
 
 
 @login_required
@@ -31,3 +32,18 @@ def expense_create(request):
     return render(request,
         "expenses/expense_form.html",
         {"form": form},)
+    
+def register(request):
+    if request.method == "POST":
+        form = UserCreationForm(request.POST)
+
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
+            return redirect("expense_list")
+    else:
+        form = UserCreationForm()
+
+    return render(request,
+                  "registration/register.html",
+                  {"form": form},)
