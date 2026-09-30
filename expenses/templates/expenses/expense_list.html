@@ -7,6 +7,15 @@
 <body>
     <h1>My Expenses</h1>
     <p>Logged in as {{ user.username }}</p>
+    <form method="get">
+        <label for="search">Search expenses:</label>
+        <input
+            id="search"
+            type="text"
+            name="q"
+            value="{{ search }}">
+        <button type="submit">Search</button>
+    </form>
     <p>
     <a href="{% url 'expense_create' %}">Add a new expense</a>
     </p>

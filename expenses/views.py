@@ -14,10 +14,18 @@ logger = logging.getLogger(__name__)
 
 @login_required
 def expense_list(request):
-    expenses = Expense.objects.filter(owner=request.user).order_by("-date")
-    return render(request,
-        "expenses/expense_list.html",
-        {"expenses": expenses},)
+    search = request.GET.get("q", "")
+
+    # FLAW 3 OWASP 2021 A03: Injection
+    # User input is inserted directly into an SQL statement.
+    sql = f"SELECT * FROM expenses_expense WHERE owner_id = {request.user.id} AND title LIKE '%{search}%' ORDER BY date DESC"
+    expenses = Expense.objects.raw(sql)
+
+    # FIX: Pass the values separately to the query to avoid injection.
+    # sql = """SELECT * FROM expenses_expense WHERE owner_id = %s AND title LIKE %s ORDER BY date DESC"""
+    # expenses = Expense.objects.raw(sql,[request.user.id, f"%{search}%"],)
+
+    return render(request, "expenses/expense_list.html",{"expenses":expenses,"search":search,},)
 
 
 @login_required
