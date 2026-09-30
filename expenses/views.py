@@ -7,6 +7,7 @@ from .forms import ExpenseForm
 from .models import Expense
 from django.contrib.auth import login
 from django.contrib.auth.forms import UserCreationForm
+from django.views.decorators.http import require_POST
 
 
 @login_required
@@ -64,3 +65,11 @@ def expense_detail(request, expense_id):
         request,
         "expenses/expense_detail.html",
         {"expense": expense},)
+    
+@login_required
+@require_POST
+def expense_delete(request, expense_id):
+    expense = get_object_or_404(Expense, pk=expense_id, owner=request.user,)
+
+    expense.delete()
+    return redirect("expense_list")
