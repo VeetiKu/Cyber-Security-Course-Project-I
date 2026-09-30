@@ -8,7 +8,9 @@ from .models import Expense
 from django.contrib.auth import login
 from django.contrib.auth.forms import UserCreationForm
 from django.views.decorators.http import require_POST
+import logging
 
+logger = logging.getLogger(__name__)
 
 @login_required
 def expense_list(request):
@@ -71,5 +73,10 @@ def expense_detail(request, expense_id):
 def expense_delete(request, expense_id):
     expense = get_object_or_404(Expense, pk=expense_id, owner=request.user,)
 
+    # FLAW 5 OWASP 2021 A09: Security Logging and Monitoring Failures
+    # The application deletes an expense without recording who performed the sensitive action or which expense was deleted.
     expense.delete()
+    
+    # FIX:
+    # logger.warning("User %s deleted expense %s", request.user.username, expense_id,)
     return redirect("expense_list")
