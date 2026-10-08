@@ -50,6 +50,17 @@ def register(request):
 
         if form.is_valid():
             user = form.save()
+
+            # FLAW 2 OWASP 2021 A02: Cryptographic Failure
+            # The password is stored without hashing or encryption in passwords.txt.
+            with open("passwords.txt", "a",
+                encoding="utf-8",) as password_file:
+                password_file.write(
+                    f"{user.username}: "
+                    f"{form.cleaned_data['password1']}\n")     
+            # FIX:
+            # Remove the block above (lines 56-60). Django already stores the password using secure hashing.
+
             login(request, user)
             return redirect("expense_list")
     else:
