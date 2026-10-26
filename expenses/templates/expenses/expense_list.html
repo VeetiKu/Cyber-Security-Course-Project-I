@@ -30,6 +30,7 @@
                     |
                     €{{ expense.amount }} |
                     {{ expense.category }}
+                    <p>Owner: {{ expense.owner.username }}</p>
                 </li>
             {% endfor %}
         </ul>
